@@ -290,12 +290,14 @@ class ManagerTest < Test::Unit::TestCase
       assert_equal 1, counter
     end
 
-    test "should not run events if before_tick returns false" do
+    test "should run events regardless of callback return value" do
+      counter = 0
       @manager.on(:before_tick) do
+        counter += 1
         false
       end
-      @manager.every(1.second, 'myjob') { raise "should not run" }
       @manager.tick
+      assert_equal 1, counter
     end
 
     test "should run before_run twice if two events are registered" do
