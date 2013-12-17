@@ -311,17 +311,15 @@ class ManagerTest < Test::Unit::TestCase
       assert_equal 2, counter
     end
 
-    test "should run even jobs only" do
+    test "should run before_run for each event registered" do
       counter = 0
-      ran = false
       @manager.on(:before_run) do
         counter += 1
-        counter % 2 == 0
       end
-      @manager.every(1.second, 'myjob') { raise "should not ran" }
-      @manager.every(1.second, 'myjob2') { ran = true }
+      @manager.every(1.second, 'myjob') { }
+      @manager.every(1.second, 'myjob2') { }
       @manager.tick
-      assert ran
+      assert_equal 2, counter
     end
 
     test "should run after_run callback for each event" do
