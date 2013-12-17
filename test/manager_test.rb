@@ -278,6 +278,18 @@ class ManagerTest < Test::Unit::TestCase
       assert_equal 1, counter
     end
 
+    test "last callback of each type wins" do
+      counter = 0
+      @manager.on(:before_tick) do
+        counter -= 1
+      end
+      @manager.on(:before_tick) do
+        counter += 1
+      end
+      @manager.tick
+      assert_equal 1, counter
+    end
+
     test "should not run events if before_tick returns false" do
       @manager.on(:before_tick) do
         false

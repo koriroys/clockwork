@@ -36,7 +36,7 @@ module Clockwork
 
     def on(event, options={}, &block)
       raise "Unsupported callback #{event}" unless [:before_tick, :after_tick, :before_run, :after_run].include?(event.to_sym)
-      (@callbacks[event.to_sym]||=[]) << block
+      @callbacks[event.to_sym] = block
     end
 
     def every(period, job, options={}, &block)
@@ -48,7 +48,7 @@ module Clockwork
     end
 
     def fire_callbacks(event, *args)
-      @callbacks[event].nil? || @callbacks[event].all? { |h| h.call(*args) }
+      @callbacks[event].nil? || @callbacks[event].call(*args)
     end
 
     def run
