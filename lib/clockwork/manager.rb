@@ -54,20 +54,20 @@ module Clockwork
     def run
       log "Starting clock for #{@events.size} events: [ #{@events.map(&:to_s).join(' ')} ]"
       loop do
+        fire_callbacks(:before_tick)
         tick
+        fire_callbacks(:after_tick)
         sleep(config[:sleep_timeout])
       end
     end
 
     def tick(t=Time.now)
-      fire_callbacks(:before_tick)
       events = events_to_run(t)
       events.each do |event|
         fire_callbacks(:before_run, event, t)
         event.run(t)
         fire_callbacks(:after_run, event, t)
       end
-      fire_callbacks(:after_tick)
       events
     end
 

@@ -261,6 +261,12 @@ class ManagerTest < Test::Unit::TestCase
   end
 
   describe "callbacks" do
+    setup do
+      @manager.configure do |config|
+        config[:sleep_timeout] = 0
+      end
+    end
+
     test "should not accept unknown callback name" do
       assert_raise(RuntimeError, "Unsupported callback unknown_callback") do
         @manager.on(:unknown_callback) do
@@ -269,12 +275,13 @@ class ManagerTest < Test::Unit::TestCase
       end
     end
 
-    test "should run before_tick callback once on tick" do
+    test "should run before_tick callback once on run" do
       counter = 0
       @manager.on(:before_tick) do
         counter += 1
       end
-      @manager.tick
+      @manager.expects(:loop).yields.then.returns
+      @manager.run
       assert_equal 1, counter
     end
 
@@ -286,7 +293,8 @@ class ManagerTest < Test::Unit::TestCase
       @manager.on(:before_tick) do
         counter += 1
       end
-      @manager.tick
+      @manager.expects(:loop).yields.then.returns
+      @manager.run
       assert_equal 1, counter
     end
 
@@ -296,7 +304,8 @@ class ManagerTest < Test::Unit::TestCase
         counter += 1
         false
       end
-      @manager.tick
+      @manager.expects(:loop).yields.then.returns
+      @manager.run
       assert_equal 1, counter
     end
 
@@ -338,7 +347,8 @@ class ManagerTest < Test::Unit::TestCase
       @manager.on(:after_tick) do
         counter += 1
       end
-      @manager.tick
+      @manager.expects(:loop).yields.then.returns
+      @manager.run
       assert_equal 1, counter
     end
   end
