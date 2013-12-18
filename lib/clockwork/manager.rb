@@ -62,13 +62,11 @@ module Clockwork
     end
 
     def tick(t=Time.now)
-      events = events_to_run(t)
-      events.each do |event|
+      events_to_run(t).each do |event|
         fire_callbacks(:before_run, event, t)
         event.run(t)
         fire_callbacks(:after_run, event, t)
       end
-      events
     end
 
     def log_error(e)
